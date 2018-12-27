@@ -18,19 +18,17 @@ func NewGame(px, po player) Game {
 
 func (g *Game) playTurn() {
 	p := g.po
-	s := O
-	ov := X_WIN
+	pr := OP
 	if len(g.moves)%2 == 0 {
 		p = g.px
-		s = X
-		ov = O_WIN
+		pr = XP
 	}
-	m := p.Play(g.b, s)
+	m := p.Play(g.b, pr)
 	g.moves = append(g.moves, m)
 
 	// Illegal moves result in opponent victory.
-	if !g.b.ApplyMove(m, s) {
-		g.result = ov
+	if !g.b.ApplyMove(m, square(pr)) {
+		g.result = winning(!pr)
 		return
 	}
 

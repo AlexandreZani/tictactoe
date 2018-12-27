@@ -6,14 +6,7 @@ func (p perfectPlayer) Id() uint64 {
 	return 1
 }
 
-func (r perfectPlayer) Play(b board, p boardSquare) gameMove {
-	best := X_WIN
-	next := O
-	if p == O {
-		best = O_WIN
-		next = X
-	}
-
+func (r perfectPlayer) Play(b board, p playerR) gameMove {
 	cur := 0
 	for m, s := range b {
 		if s != EMPTY {
@@ -21,9 +14,9 @@ func (r perfectPlayer) Play(b board, p boardSquare) gameMove {
 		}
 
 		bc := b
-		bc[m] = p
-		res := miniMax(bc, next)
-		if res == best {
+		bc.ApplyMove(gameMove(m), square(p))
+		res := miniMax(bc, !p)
+		if res == winning(p) {
 			return gameMove(m)
 		}
 		if res == DRAW {
@@ -34,28 +27,21 @@ func (r perfectPlayer) Play(b board, p boardSquare) gameMove {
 }
 
 // TODO(azani): Memoize
-func miniMax(b board, p boardSquare) gameResult {
+func miniMax(b board, p playerR) gameResult {
 	if res := b.Evaluate(); res != UNFINISHED {
 		return res
 	}
 
-	best := X_WIN
-	cur := O_WIN
-	next := O
-	if p == O {
-		best = O_WIN
-		cur = X_WIN
-		next = X
-	}
+	cur := winning(!p)
 
 	for m, s := range b {
 		if s == EMPTY {
 			bc := b
-			bc[m] = p
-			res := miniMax(bc, next)
+			bc.ApplyMove(gameMove(m), square(p))
+			res := miniMax(bc, !p)
 			if res == DRAW {
 				cur = DRAW
-			} else if res == best {
+			} else if res == winning(p) {
 				return res
 			}
 		}

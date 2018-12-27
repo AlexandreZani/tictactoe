@@ -4,9 +4,32 @@ import (
 	"math/rand"
 )
 
+type playerR bool
+
+const (
+	XP = playerR(true)
+	OP = playerR(false)
+)
+
+func winning(p playerR) gameResult {
+	if p == XP {
+		return X_WIN
+	}
+
+	return O_WIN
+}
+
+func square(p playerR) boardSquare {
+	if p == XP {
+		return X
+	}
+
+	return O
+}
+
 type player interface {
 	Id() uint64
-	Play(b board, p boardSquare) gameMove
+	Play(b board, p playerR) gameMove
 }
 
 type gameMove uint8
@@ -17,7 +40,7 @@ func (p randomPlayer) Id() uint64 {
 	return 0
 }
 
-func (p randomPlayer) Play(b board, _ boardSquare) gameMove {
+func (p randomPlayer) Play(b board, _ playerR) gameMove {
 	return gameMove(rand.Intn(8) % 9)
 }
 
@@ -31,7 +54,7 @@ func (p nextAvailablePlayer) Id() uint64 {
 	return 0
 }
 
-func (p nextAvailablePlayer) Play(b board, _ boardSquare) gameMove {
+func (p nextAvailablePlayer) Play(b board, _ playerR) gameMove {
 	for m, s := range b {
 		if s == EMPTY {
 			return gameMove(m)
