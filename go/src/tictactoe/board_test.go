@@ -68,3 +68,11 @@ func TestEvaluate(t *testing.T) {
 	}
 	assertEq(t, UNFINISHED, b.Evaluate())
 }
+
+func TestBoardCopy(t *testing.T) {
+	b1 := newBoard()
+	b2 := b1
+	b2[0] = X
+	assertEq(t, EMPTY, b1[0])
+	assertEq(t, X, b2[0])
+}

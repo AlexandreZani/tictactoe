@@ -12,6 +12,13 @@ func assertEq(t *testing.T, e interface{}, r interface{}) {
 	}
 }
 
+func assertNeq(t *testing.T, e interface{}, r interface{}) {
+	if e == r {
+		t.Errorf("Expected not %v (type %v)\nReceived %v (type %v)",
+			e, reflect.TypeOf(e), r, reflect.TypeOf(r))
+	}
+}
+
 func assertTrue(t *testing.T, v bool) {
 	assertEq(t, true, v)
 }
