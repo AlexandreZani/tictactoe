@@ -1,16 +1,8 @@
 package tictactoe
 
 import (
-	"reflect"
 	"testing"
 )
-
-func assertEq(t *testing.T, a interface{}, b interface{}) {
-	if a != b {
-		t.Errorf("Expected %v (type %v)\nReceived %v (type %v)",
-			a, reflect.TypeOf(a), b, reflect.TypeOf(b))
-	}
-}
 
 func TestSquare(t *testing.T) {
 	b := board{0, 1, 2, 3, 4, 5, 6, 7, 8}
@@ -25,6 +17,25 @@ func TestSquare(t *testing.T) {
 	assertEq(t, boardSquare(6), b.Square(2, 0))
 	assertEq(t, boardSquare(7), b.Square(2, 1))
 	assertEq(t, boardSquare(8), b.Square(2, 2))
+}
+
+func TestNewBoard(t *testing.T) {
+	b := newBoard()
+	for _, s := range b {
+		assertEq(t, s, EMPTY)
+	}
+}
+
+func TestApplyMove(t *testing.T) {
+	b := newBoard()
+	assertTrue(t, b.ApplyMove(gameMove(2), X))
+	assertEq(t, X, b[2])
+
+	assertTrue(t, b.ApplyMove(gameMove(5), O))
+	assertEq(t, O, b[5])
+
+	assertFalse(t, b.ApplyMove(gameMove(5), X))
+	assertEq(t, O, b[5])
 }
 
 func TestEvaluate(t *testing.T) {

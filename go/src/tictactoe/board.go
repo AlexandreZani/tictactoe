@@ -3,18 +3,23 @@ package tictactoe
 type boardSquare int8
 
 const (
-	X     = boardSquare(0)
-	O     = boardSquare(1)
-	EMPTY = boardSquare(2)
+	EMPTY = boardSquare(0)
+	X     = boardSquare(1)
+	O     = boardSquare(2)
 )
 
 type board [9]boardSquare
 
-type gameMove uint8
+func newBoard() board {
+	return board{}
+}
 
-type player interface {
-	Id() uint32
-	Play(b board) gameMove
+func (b *board) ApplyMove(m gameMove, s boardSquare) bool {
+	if b[int(m)] != EMPTY {
+		return false
+	}
+	b[int(m)] = s
+	return true
 }
 
 func (b board) Square(row, col int) boardSquare {
@@ -27,16 +32,16 @@ func (b board) Square(row, col int) boardSquare {
 	return b[row*3+col]
 }
 
-type GameResult int8
+type gameResult int8
 
 const (
-	X_WIN      = GameResult(0)
-	O_WIN      = GameResult(1)
-	DRAW       = GameResult(2)
-	UNFINISHED = GameResult(4)
+	X_WIN      = gameResult(0)
+	O_WIN      = gameResult(1)
+	DRAW       = gameResult(2)
+	UNFINISHED = gameResult(4)
 )
 
-func (b board) row3(row0, col0, rowStep, colStep int) GameResult {
+func (b board) row3(row0, col0, rowStep, colStep int) gameResult {
 	s0 := b.Square(row0, col0)
 	s1 := b.Square(row0+rowStep, col0+colStep)
 	s2 := b.Square(row0+2*rowStep, col0+2*colStep)
@@ -51,7 +56,7 @@ func (b board) row3(row0, col0, rowStep, colStep int) GameResult {
 	return UNFINISHED
 }
 
-func (b board) Evaluate() GameResult {
+func (b board) Evaluate() gameResult {
 	for r := 0; r < 3; r++ {
 		if res := b.row3(r, 0, 0, 1); res != UNFINISHED {
 			return res
