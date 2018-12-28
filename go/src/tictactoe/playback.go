@@ -4,8 +4,9 @@ import (
 	"encoding/csv"
 )
 
-type playbackBuffer interface {
+type PlaybackWriter interface {
 	AddPlayback(p [19]bool)
+	Flush()
 }
 
 type memPlaybackBuffer struct {
@@ -15,6 +16,8 @@ type memPlaybackBuffer struct {
 func (m *memPlaybackBuffer) AddPlayback(p [19]bool) {
 	m.buf = append(m.buf, p)
 }
+
+func (m memPlaybackBuffer) Flush() {}
 
 type csvPlaybackWriter struct {
 	w *csv.Writer
@@ -35,3 +38,12 @@ func (w *csvPlaybackWriter) AddPlayback(p [19]bool) {
 	}
 	w.w.Write(r[:])
 }
+
+func (w *csvPlaybackWriter) Flush() {
+	w.w.Flush()
+}
+
+type DevNullPlaybackWriter struct{}
+
+func (w DevNullPlaybackWriter) AddPlayback(_ [19]bool) {}
+func (w DevNullPlaybackWriter) Flush()                 {}

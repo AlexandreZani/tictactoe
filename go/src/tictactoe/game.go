@@ -42,7 +42,7 @@ func (g *Game) Play() gameResult {
 	return g.result
 }
 
-func (g Game) AppendPlayback(p playerR, buf playbackBuffer) {
+func (g Game) AppendPlayback(p playerR, buf PlaybackWriter) {
 	if g.result == UNFINISHED {
 		panic("Can not generate playbacks from an unfinished game.")
 	}
