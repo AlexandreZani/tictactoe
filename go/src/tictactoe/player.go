@@ -27,7 +27,7 @@ func square(p playerR) boardSquare {
 	return O
 }
 
-type player interface {
+type Player interface {
 	Id() uint64
 	Play(b board, p playerR) gameMove
 }

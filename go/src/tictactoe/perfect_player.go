@@ -2,6 +2,10 @@ package tictactoe
 
 type perfectPlayer struct{}
 
+func NewPerfectPlayer() perfectPlayer {
+	return perfectPlayer{}
+}
+
 func (p perfectPlayer) Id() uint64 {
 	return 1
 }

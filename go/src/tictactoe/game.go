@@ -1,13 +1,13 @@
 package tictactoe
 
 type Game struct {
-	px, po player
+	px, po Player
 	b      board
 	result gameResult
 	moves  []gameMove
 }
 
-func NewGame(px, po player) Game {
+func NewGame(px, po Player) Game {
 	return Game{
 		px:     px,
 		po:     po,
@@ -35,10 +35,11 @@ func (g *Game) playTurn() {
 	g.result = g.b.Evaluate()
 }
 
-func (g *Game) Play() {
+func (g *Game) Play() gameResult {
 	for g.result == UNFINISHED {
 		g.playTurn()
 	}
+	return g.result
 }
 
 func (g Game) AppendPlayback(p playerR, buf playbackBuffer) {
