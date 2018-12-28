@@ -40,3 +40,38 @@ func (g *Game) Play() {
 		g.playTurn()
 	}
 }
+
+func (g Game) AppendPlayback(p playerR, buf playbackBuffer) {
+	if g.result == UNFINISHED {
+		panic("Can not generate playbacks from an unfinished game.")
+	}
+
+	playback := [19]uint8{}
+
+	// If the specified player did not lose, byte 18 is 1.
+	playback[18] = 1
+	if winning(!p) == g.result {
+		playback[18] = 0
+	}
+
+	x := playback[0:9]
+	o := playback[9:18]
+	if p == OP {
+		o = playback[0:9]
+		x = playback[9:18]
+	}
+
+	cur := XP
+	for _, m := range g.moves {
+		if cur == XP {
+			x[m] = 1
+		}
+		if cur == OP {
+			o[m] = 1
+		}
+		if cur == p {
+			buf.AddPlayback(playback)
+		}
+		cur = !cur
+	}
+}
