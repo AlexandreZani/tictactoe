@@ -46,12 +46,12 @@ func (g Game) AppendPlayback(p playerR, buf playbackBuffer) {
 		panic("Can not generate playbacks from an unfinished game.")
 	}
 
-	playback := [19]uint8{}
+	playback := [19]bool{}
 
 	// If the specified player did not lose, byte 18 is 1.
-	playback[18] = 1
+	playback[18] = true
 	if winning(!p) == g.result {
-		playback[18] = 0
+		playback[18] = false
 	}
 
 	x := playback[0:9]
@@ -64,10 +64,10 @@ func (g Game) AppendPlayback(p playerR, buf playbackBuffer) {
 	cur := XP
 	for _, m := range g.moves {
 		if cur == XP {
-			x[m] = 1
+			x[m] = true
 		}
 		if cur == OP {
-			o[m] = 1
+			o[m] = true
 		}
 		if cur == p {
 			buf.AddPlayback(playback)
