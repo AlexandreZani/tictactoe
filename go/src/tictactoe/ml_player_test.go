@@ -1,30 +1,18 @@
 package tictactoe
 
 import (
-	//tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"testing"
 )
 
 func TestLoadModel(t *testing.T) {
-	m := loadModelOrDie("testdata/test_model")
+	m := LoadModelOrDie("testdata/test_model")
 	assertNeq(t, nil, m)
+}
 
-	/*
-		p := NewMlPlayer(m)
-
-		tensor, _ := tf.NewTensor([2][18]float32{})
-		result, err := p.model.Session.Run(
-			map[tf.Output]*tf.Tensor{p.input.Output(0): tensor},
-			[]tf.Output{p.output.Output(0)},
-			nil,
-		)
-
-		if err != nil {
-			t.Error(err)
-		}
-
-		t.Error(result[0].Value())
-	*/
+func TestTestModelVsSelf(t *testing.T) {
+	m := LoadModelOrDie("testdata/test_model")
+	g := NewGame(NewMlPlayer(m), NewMlPlayer(m))
+	g.Play()
 }
 
 func TestBoardToSplitFloat(t *testing.T) {
@@ -49,9 +37,7 @@ func TestBoardToSplitFloat(t *testing.T) {
 		0.0, 0.0, 0.0,
 	}
 
-	actual := [27]float32{}
-
-	boardToSplitFloat(b, XP, gameMove(4), &actual)
+	actual := boardToSplitFloat(b, XP, gameMove(4))
 
 	assertEq(t, gold, actual)
 }

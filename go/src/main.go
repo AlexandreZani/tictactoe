@@ -24,8 +24,7 @@ func getPlayer(s string) tictactoe.Player {
 	case "random":
 		return tictactoe.NewRandomPlayer()
 	}
-	log.Fatalf("Unknown player: %s", s)
-	return nil
+	return tictactoe.NewMlPlayer(tictactoe.LoadModelOrDie(s))
 }
 
 func getPlaybackWriter(p string) tictactoe.PlaybackWriter {
