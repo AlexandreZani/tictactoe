@@ -37,9 +37,10 @@ func findLayerWithNamePart(m *tf.SavedModel, part string) *tf.Operation {
 	return nil
 }
 
-func boardToSplitFloat(b board, p playerR, buf *[18]float32) {
+func boardToSplitFloat(b board, p playerR, m gameMove, buf *[27]float32) {
 	ps := square(p)
 	opp := square(!p)
+	buf[int(m)+18] = 1.0
 
 	for i, s := range b {
 		if s == ps {

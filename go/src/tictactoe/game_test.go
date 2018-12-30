@@ -17,15 +17,24 @@ func TestAppendPlayback(t *testing.T) {
 	buf := memPlaybackBuffer{}
 	g.AppendPlayback(XP, &buf)
 
-	gold := [][19]bool{
+	gold := [][28]bool{
+		{false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, false,
+			true, false, false, false, false, false, false, false, false,
+			true},
 		{true, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false, true},
+			false, true, false, false, false, false, false, false, false,
+			false, false, true, false, false, false, false, false, false,
+			true},
 		{true, false, true, false, false, false, false, false, false,
-			false, true, false, false, false, false, false, false, false, true},
+			false, true, false, true, false, false, false, false, false,
+			false, false, false, false, true, false, false, false, false,
+			true},
 		{true, false, true, false, true, false, false, false, false,
-			false, true, false, true, false, false, false, false, false, true},
-		{true, false, true, false, true, false, true, false, false,
-			false, true, false, true, false, true, false, false, false, true},
+			false, true, false, true, false, true, false, false, false,
+			false, false, false, false, false, false, true, false, false,
+			true},
 	}
+
 	assertEq(t, gold, buf.buf)
 }

@@ -7,7 +7,7 @@ from tensorflow.keras import optimizers
 
 def NewModel():
   return keras.Sequential([
-    keras.layers.Dense(20, input_shape=(18,), activation=tf.nn.relu, name="inputLayer"),
+    keras.layers.Dense(128, input_shape=(27,), activation=tf.nn.relu, name="inputLayer"),
     keras.layers.Dense(1, activation=tf.nn.sigmoid, name="outputLayer"),
     ])
 
@@ -21,6 +21,6 @@ def LoadData(path):
   return numpy.loadtxt(open(path, "rb"), delimiter=",")
 
 model = NewModel()
-print(model.predict(np.array([[0]*18])))
+print(model.predict(np.array([[0]*27])))
 
 #SaveModel(model, "go/src/tictactoe/testdata/test_model")

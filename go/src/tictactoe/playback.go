@@ -5,15 +5,15 @@ import (
 )
 
 type PlaybackWriter interface {
-	AddPlayback(p [19]bool)
+	AddPlayback(p [28]bool)
 	Flush()
 }
 
 type memPlaybackBuffer struct {
-	buf [][19]bool
+	buf [][28]bool
 }
 
-func (m *memPlaybackBuffer) AddPlayback(p [19]bool) {
+func (m *memPlaybackBuffer) AddPlayback(p [28]bool) {
 	m.buf = append(m.buf, p)
 }
 
@@ -27,8 +27,8 @@ func NewCsvPlaybackWriter(w *csv.Writer) *csvPlaybackWriter {
 	return &csvPlaybackWriter{w: w}
 }
 
-func (w *csvPlaybackWriter) AddPlayback(p [19]bool) {
-	r := [19]string{}
+func (w *csvPlaybackWriter) AddPlayback(p [28]bool) {
+	r := [28]string{}
 	for i := range p {
 		if p[i] {
 			r[i] = "1"
@@ -45,5 +45,5 @@ func (w *csvPlaybackWriter) Flush() {
 
 type DevNullPlaybackWriter struct{}
 
-func (w DevNullPlaybackWriter) AddPlayback(_ [19]bool) {}
+func (w DevNullPlaybackWriter) AddPlayback(_ [28]bool) {}
 func (w DevNullPlaybackWriter) Flush()                 {}

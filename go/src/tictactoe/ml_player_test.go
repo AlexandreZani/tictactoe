@@ -35,7 +35,7 @@ func TestBoardToSplitFloat(t *testing.T) {
 		E, E, X,
 	}
 
-	gold := [18]float32{
+	gold := [27]float32{
 		1.0, 0.0, 0.0,
 		0.0, 1.0, 0.0,
 		0.0, 0.0, 1.0,
@@ -43,11 +43,15 @@ func TestBoardToSplitFloat(t *testing.T) {
 		0.0, 1.0, 1.0,
 		0.0, 0.0, 0.0,
 		0.0, 0.0, 0.0,
+
+		0.0, 0.0, 0.0,
+		0.0, 1.0, 0.0,
+		0.0, 0.0, 0.0,
 	}
 
-	actual := [18]float32{}
+	actual := [27]float32{}
 
-	boardToSplitFloat(b, XP, &actual)
+	boardToSplitFloat(b, XP, gameMove(4), &actual)
 
 	assertEq(t, gold, actual)
 }
