@@ -66,12 +66,16 @@ class Trainer(object):
   def RunIter0(self, model=None):
     if not model:
       model = NewModel()
+    self.CompileModel(model)
     ExportModel(model, self.ExportModelPath(0))
     SaveModel(model, self.SavedModelPath(0))
 
-  def TrainModel(self, model, x, y):
-    opt = tf.train.AdamOptimizer(learning_rate=1e-1)
+  def CompileModel(self, model):
+    opt = keras.optimizers.Adam(lr=1e-1)
     model.compile(optimizer=opt, loss='binary_crossentropy')
+
+  def TrainModel(self, model, x, y):
+    self.CompileModel(model)
     model.fit(x, y, epochs=10, verbose=0)
 
   def RunIter(self, iter_num, model=None):
@@ -80,10 +84,10 @@ class Trainer(object):
       return
 
     # TODO: Figure out how to save and load models "correctly".
-    #keras.backend.set_session(tf.Session())
+    keras.backend.clear_session()
     os.mkdir(self.IterPath(iter_num))
     self.GenerateData(iter_num-1, iter_num)
-    #model = LoadModel(SavedModelPath(iter_num-1))
+    model = LoadModel(self.SavedModelPath(iter_num-1))
     x, y = self.LoadData(iter_num)
     self.TrainModel(model, x, y)
     ExportModel(model, self.ExportModelPath(iter_num))
@@ -96,11 +100,11 @@ def main():
   parser.add_argument('-workdir', type=str, default=WORKDIR,
       help='Where to store the intermediate data.')
   args = parser.parse_args()
-  model = NewModel()
+  #model = NewModel()
   trainer = Trainer(args.workdir)
   for i in range(args.iter):
     print("Iter: ", i)
-    trainer.RunIter(i, model)
+    trainer.RunIter(i)
   return 0
 
 if __name__ == "__main__":
