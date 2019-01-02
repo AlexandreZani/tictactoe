@@ -1,18 +1,20 @@
 package tictactoe
 
 type Game struct {
-	px, po Player
-	b      board
-	result gameResult
-	moves  []gameMove
+	px, po      Player
+	b           board
+	result      gameResult
+	illegalMove bool
+	moves       []gameMove
 }
 
 func NewGame(px, po Player) Game {
 	return Game{
-		px:     px,
-		po:     po,
-		b:      newBoard(),
-		result: UNFINISHED,
+		px:          px,
+		po:          po,
+		b:           newBoard(),
+		result:      UNFINISHED,
+		illegalMove: false,
 	}
 }
 
@@ -28,6 +30,7 @@ func (g *Game) playTurn() {
 
 	// Illegal moves result in opponent victory.
 	if !g.b.ApplyMove(m, square(pr)) {
+		g.illegalMove = true
 		g.result = winning(!pr)
 		return
 	}
@@ -40,6 +43,10 @@ func (g *Game) Play() gameResult {
 		g.playTurn()
 	}
 	return g.result
+}
+
+func (g Game) IllegalMove() bool {
+	return g.illegalMove
 }
 
 func (g Game) AppendPlayback(p playerR, buf PlaybackWriter) {

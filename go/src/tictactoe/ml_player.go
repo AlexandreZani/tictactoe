@@ -4,7 +4,6 @@ import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"log"
 	"math/rand"
-	"strings"
 )
 
 type mlPlayer struct {
@@ -14,14 +13,10 @@ type mlPlayer struct {
 }
 
 func NewMlPlayer(m *tf.SavedModel) mlPlayer {
-	i := findLayerWithNamePart(m, "inputLayer_input")
-	o := findLayerWithNamePart(m, "outputLayer/Sigmoid")
+	i := findLayerWithName(m, "inputLayer_input")
+	o := findLayerWithName(m, "outputLayer/Sigmoid")
 
 	return mlPlayer{model: m, input: i, output: o}
-}
-
-func (_ mlPlayer) Id() uint64 {
-	return 2
 }
 
 func (p mlPlayer) Play(b board, r playerR) gameMove {
@@ -47,20 +42,49 @@ func (p mlPlayer) Play(b board, r playerR) gameMove {
 
 	output := result[0].Value().([][]float32)
 
+	return gameMove(sampleWeighted(output, rand.Float32()))
+}
+
+func variance(w [][]float32) float32 {
+	mean := float32(0.0)
+	for _, a := range w {
+		mean += (a[0] / float32(len(w)))
+	}
+
+	v := float32(0.0)
+	for _, a := range w {
+		v += (a[0] - mean) * (a[0] - mean) / float32(len(w))
+	}
+
+	return v
+}
+
+func sampleWeighted(w [][]float32, v float32) int {
 	sum := float32(0.0)
-	for _, a := range output {
+	for _, a := range w {
 		sum += a[0]
 	}
 
-	target := rand.Float32() * sum
-	for i, a := range output {
-		target -= a[0]
-		if target < 0 {
-			return gameMove(i)
+	t := v * sum
+	for i, a := range w {
+		t -= a[0]
+		if t <= 0 {
+			return i
 		}
 	}
 
-	return gameMove(8)
+	return len(w) - 1
+}
+
+func argMax(w [][]float32) int {
+	r := 0
+	for i := range w {
+		if w[i][0] > w[r][0] {
+			r = i
+		}
+	}
+
+	return r
 }
 
 func LoadModelOrDie(p string) *tf.SavedModel {
@@ -71,14 +95,20 @@ func LoadModelOrDie(p string) *tf.SavedModel {
 	return m
 }
 
-func findLayerWithNamePart(m *tf.SavedModel, part string) *tf.Operation {
+func findLayerWithName(m *tf.SavedModel, name string) (op *tf.Operation) {
+	op = nil
 	for i, o := range m.Graph.Operations() {
-		if strings.Contains(o.Name(), part) {
-			return &m.Graph.Operations()[i]
+		if o.Name() == name {
+			if op != nil {
+				log.Fatalf("Found more than one of %s.", name)
+			}
+			op = &m.Graph.Operations()[i]
 		}
 	}
-	log.Fatalf("Could not find %s.", part)
-	return nil
+	if op == nil {
+		log.Fatalf("Could not find %s.", name)
+	}
+	return op
 }
 
 func boardToSplitFloat(b board, p playerR, m gameMove) (buf [27]float32) {

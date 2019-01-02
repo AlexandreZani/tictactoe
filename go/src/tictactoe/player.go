@@ -28,17 +28,12 @@ func square(p playerR) boardSquare {
 }
 
 type Player interface {
-	Id() uint64
 	Play(b board, p playerR) gameMove
 }
 
 type gameMove uint8
 
 type randomPlayer struct{}
-
-func (p randomPlayer) Id() uint64 {
-	return 0
-}
 
 func (p randomPlayer) Play(b board, _ playerR) gameMove {
 	return gameMove(rand.Intn(8) % 9)
@@ -48,11 +43,23 @@ func NewRandomPlayer() randomPlayer {
 	return randomPlayer{}
 }
 
-type nextAvailablePlayer struct{}
+type randomValidPlayer struct{}
 
-func (p nextAvailablePlayer) Id() uint64 {
-	return 0
+func (p randomValidPlayer) Play(b board, _ playerR) gameMove {
+	empty := []int{}
+	for i, s := range b {
+		if s == EMPTY {
+			empty = append(empty, i)
+		}
+	}
+	return gameMove(empty[rand.Int()%len(empty)])
 }
+
+func NewRandomValidPlayer() randomValidPlayer {
+	return randomValidPlayer{}
+}
+
+type nextAvailablePlayer struct{}
 
 func (p nextAvailablePlayer) Play(b board, _ playerR) gameMove {
 	for m, s := range b {

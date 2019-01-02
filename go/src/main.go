@@ -23,6 +23,8 @@ func getPlayer(s string) tictactoe.Player {
 		return tictactoe.NewPerfectPlayer()
 	case "random":
 		return tictactoe.NewRandomPlayer()
+	case "random_valid":
+		return tictactoe.NewRandomValidPlayer()
 	}
 	return tictactoe.NewMlPlayer(tictactoe.LoadModelOrDie(s))
 }
@@ -54,6 +56,8 @@ func main() {
 	draw := 0
 	p1Win := 0
 	p2Win := 0
+	p1Illegal := 0
+	p2Illegal := 0
 
 	for i := 0; i < *n; i++ {
 		xp := &p1
@@ -62,6 +66,8 @@ func main() {
 		oWin := &p2Win
 		xw := &w1
 		ow := &w2
+		xIllegal := &p1Illegal
+		oIllegal := &p2Illegal
 		if rand.Int()%2 == 0 {
 			xp = &p2
 			op = &p1
@@ -69,6 +75,8 @@ func main() {
 			oWin = &p1Win
 			xw = &w2
 			ow = &w1
+			xIllegal = &p2Illegal
+			oIllegal = &p1Illegal
 		}
 
 		g := tictactoe.NewGame(*xp, *op)
@@ -77,8 +85,14 @@ func main() {
 			draw++
 		case tictactoe.X_WIN:
 			*xWin++
+			if g.IllegalMove() {
+				*oIllegal++
+			}
 		case tictactoe.O_WIN:
 			*oWin++
+			if g.IllegalMove() {
+				*xIllegal++
+			}
 		}
 		g.AppendPlayback(tictactoe.XP, *xw)
 		g.AppendPlayback(tictactoe.OP, *ow)
@@ -86,6 +100,6 @@ func main() {
 	}
 
 	if *summary {
-		fmt.Printf("%v\n%v\n%v\n", p1Win, draw, p2Win)
+		fmt.Printf("%v\n%v\n%v\n%v\n%v\n", p1Win, draw, p2Win, p1Illegal, p2Illegal)
 	}
 }

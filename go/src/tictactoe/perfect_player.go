@@ -6,10 +6,6 @@ func NewPerfectPlayer() perfectPlayer {
 	return perfectPlayer{}
 }
 
-func (p perfectPlayer) Id() uint64 {
-	return 1
-}
-
 func (r perfectPlayer) Play(b board, p playerR) gameMove {
 	cur := 0
 	for m, s := range b {
